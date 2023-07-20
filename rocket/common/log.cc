@@ -2,12 +2,41 @@
 #include <sstream>
 #include "rocket/common/log.h"
 #include "rocket/common/util.h"
-
+#include "rocket/common/config.h"
 
 
 namespace rocket {
 
 static Logger *g_logger = nullptr;
+
+std::string LogLevelToString(LogLevel level) {
+    switch (level)
+    {
+    case Debug:
+        return "Debug";
+    case Info:
+        return "Info";
+    case Error:
+        return "Error";
+    default:
+        return "UNKONWN";
+    }
+}
+
+LogLevel StringToLogLevel(const std::string &log_level) {
+    if (log_level == "Debug") {
+        return Debug;
+    }
+    else if (log_level == "Info") {
+        return Info;
+    }
+    else if (log_level == "Error") {
+        return Error;
+    }
+    else {
+        return Unknown;
+    }
+}
 
 std::string LogEvent::toString() {
     struct timeval now_time;
@@ -35,20 +64,6 @@ std::string LogEvent::toString() {
     return ss.str();
 }
 
-std::string LogEvent::LogLevelToString(LogLevel level) {
-    switch (level)
-    {
-    case Debug:
-        return "Debug";
-    case Info:
-        return "Info";
-    case Error:
-        return "Error";
-    default:
-        return "UNKONWN";
-    }
-}
-
 void Logger::log() {
     while (!m_buffer.empty()) {
         std::string msg = m_buffer.front();
@@ -60,14 +75,19 @@ void Logger::log() {
 }
 
 Logger* Logger::GetGlobalLogger() {
-    if (g_logger) {
-        return g_logger;
-    }
-    return new Logger(); 
+    return g_logger;
+}
+
+void Logger::InitGlobalLogger() {
+    LogLevel global_log_level = StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
+    printf("Init log level [%s]", LogLevelToString(global_log_level).c_str());
+    g_logger = new Logger(global_log_level); 
 }
 
 void Logger::pushLog(const std::string &msg) {
     m_buffer.push(msg);
 }
+
+
 
 }
