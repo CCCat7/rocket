@@ -1,6 +1,4 @@
-.vscode/
-obj/
-bin/
-lib/
-*.o
-*.a
+.vscode/*
+bin/*
+lib/*
+obj/*

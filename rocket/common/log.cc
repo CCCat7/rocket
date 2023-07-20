@@ -58,20 +58,9 @@ std::string LogEvent::toString() {
 
     ss << "[" << LogLevelToString(m_level) << "]\t"
         << "[" << time_str << "]\t"
-        << "[" << m_pid << ":" << m_thread_id << "]\t"
-        << "[" << std::string(__FILE__) << ":" << __LINE__ << "]\t";
+        << "[" << m_pid << ":" << m_thread_id << "]\t";
 
     return ss.str();
-}
-
-void Logger::log() {
-    while (!m_buffer.empty()) {
-        std::string msg = m_buffer.front();
-        m_buffer.pop();
-        printf(msg.c_str());
-    }
-
-    
 }
 
 Logger* Logger::GetGlobalLogger() {
@@ -80,14 +69,27 @@ Logger* Logger::GetGlobalLogger() {
 
 void Logger::InitGlobalLogger() {
     LogLevel global_log_level = StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
-    printf("Init log level [%s]", LogLevelToString(global_log_level).c_str());
+    printf("Init log level [%s]\n", LogLevelToString(global_log_level).c_str());
     g_logger = new Logger(global_log_level); 
 }
 
 void Logger::pushLog(const std::string &msg) {
+    ScopeMutex<Mutex> lock(m_mutex);
     m_buffer.push(msg);
+    lock.unlock();
 }
 
+void Logger::log() {
+    ScopeMutex<Mutex> lock(m_mutex);
+    std::queue<std::string> tmp = m_buffer;
+    m_buffer.swap(tmp);
+    lock.unlock();
 
+    while (!tmp.empty()) {
+        std::string msg = tmp.front();
+        tmp.pop();
+        printf(msg.c_str());
+    }
+}
 
 }

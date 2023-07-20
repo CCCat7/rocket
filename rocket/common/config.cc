@@ -1,8 +1,6 @@
 #include <tinyxml/tinyxml.h>
 #include "rocket/common/config.h"
 #include <string>
-#include <iostream>
-#include <fstream>
 
 #define READ_XML_NODE(name, parent) \
     TiXmlElement *name##_node = parent->FirstChildElement(#name); \
