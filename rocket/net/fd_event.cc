@@ -4,7 +4,7 @@
 namespace rocket
 {
 
-FdEvent::FdEvent(int fd) : m_fd(fd ) {
+FdEvent::FdEvent(int fd) : m_fd(fd) {
 
 }
 

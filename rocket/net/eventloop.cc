@@ -107,7 +107,7 @@ void EventLoop::loop() {
 }
 
 void EventLoop::wakeup() {
-
+    m_wakeup_fd_event->wakeup();
 }
 
 void EventLoop::stop() {

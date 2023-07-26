@@ -32,13 +32,15 @@ private:
 
 private:
     pid_t m_thread_id {0};
+
     int m_epoll_fd {0};
+
     int m_wakeup_fd {0};
     WakeupFdEvent *m_wakeup_fd_event {nullptr};
+
     bool m_stop_flag {false};
+
     std::set<int> m_listen_fds; 
-
-
 
     std::queue<std::function<void()>> m_pending_tasks;
 

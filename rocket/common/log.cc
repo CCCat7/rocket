@@ -13,24 +13,24 @@ std::string LogLevelToString(LogLevel level) {
     switch (level)
     {
     case Debug:
-        return "Debug";
+        return "DEBUG";
     case Info:
-        return "Info";
+        return "INFO";
     case Error:
-        return "Error";
+        return "ERROR";
     default:
         return "UNKONWN";
     }
 }
 
 LogLevel StringToLogLevel(const std::string &log_level) {
-    if (log_level == "Debug") {
+    if (log_level == "DEBUG") {
         return Debug;
     }
-    else if (log_level == "Info") {
+    else if (log_level == "INFO") {
         return Info;
     }
-    else if (log_level == "Error") {
+    else if (log_level == "ERROR") {
         return Error;
     }
     else {
