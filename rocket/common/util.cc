@@ -1,6 +1,5 @@
 #include "rocket/common/util.h"
 
-
 namespace rocket {
 
 static int g_pid = 0;
@@ -12,11 +11,20 @@ pid_t getPid() {
     }
     return getpid();
 }
+
 pid_t getThreadId() {
     if (g_thread_id != 0) {
         return g_thread_id;
     }
     return syscall(SYS_gettid);
 }
+
+int64_t getNowMs() {
+    timeval val;
+    gettimeofday(&val, NULL);
+
+    return val.tv_sec * 1000 + val.tv_usec / 1000;
+}
+
 }
 

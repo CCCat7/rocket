@@ -9,6 +9,7 @@
 #include "rocket/common/mutex.h"
 #include "rocket/net/fd_event.h"
 #include "rocket/net/wakeup_fd_event.h" 
+#include "rocket/net/timer.h"
 
 namespace rocket {
 
@@ -45,6 +46,8 @@ private:
     std::queue<std::function<void()>> m_pending_tasks;
 
     Mutex m_mutex;
+
+    Timer *m_timer {nullptr};
 };
 
 }
