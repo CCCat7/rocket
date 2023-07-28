@@ -26,10 +26,14 @@ public:
     bool isInLoopThread();
     void addTask(std::function<void()> cb, bool is_wake_up = false);
 
+    void addTimerEvent(TimerEvent::s_ptr event);
+
 private:
     void dealWakeup();
 
     void initWakeUpFdEvent();
+
+    void initTimer();
 
 private:
     pid_t m_thread_id {0};

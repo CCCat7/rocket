@@ -6,8 +6,7 @@
 #include "rocket/net/fd_event.h"
 #include "rocket/net/timer_event.h"
 
-namespace rocket
-{
+namespace rocket {
 
 class Timer : public FdEvent {
 public:

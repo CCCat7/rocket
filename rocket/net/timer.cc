@@ -4,8 +4,7 @@
 #include "rocket/common/log.h"
 #include "rocket/common/util.h"
 
-namespace rocket
-{
+namespace rocket {
 
 Timer::Timer() : FdEvent() {
     m_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
@@ -32,7 +31,7 @@ void Timer::onTimer() {
     ino64_t now = getNowMs();
 
     std::vector<TimerEvent::s_ptr> tmps;
-    std::vector<std::pair<ino64_t, std::function<void()>>> tasks;
+    std::vector<std::pair<int64_t, std::function<void()>>> tasks;
 
     ScopeMutex<Mutex> lock(m_mutex);
     auto it = m_pending_events.begin();
@@ -85,22 +84,25 @@ void Timer::resetArriveTime() {
     auto it = tmp.begin();
     int64_t interval = 0;
     if (it->second->getArriveTime() > now) {
-        interval = it->second->getArriveTime();
+        interval = it->second->getArriveTime() - now;
     }
     else {
         interval = 100;
     }
 
     timespec ts;
+    memset(&ts, 0, sizeof(ts));
     ts.tv_sec = interval / 1000;
     ts.tv_nsec = (interval % 1000) * 1000000;
 
     itimerspec value;
+    memset(&value, 0, sizeof(value));
     value.it_value = ts;
     int rt = timerfd_settime(m_fd, 0, &value, NULL);
     if (rt != 0) {
         ERRORLOG("timerfd_settime error, errno=%d, error=%s", errno, strerror(errno))
     }
+    DEBUGLOG("timer reset to %lld", now + interval);
 }
 
 void Timer::addTimerEvent(TimerEvent::s_ptr event) {
