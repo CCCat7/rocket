@@ -125,6 +125,10 @@ void EventLoop::loop() {
             }
         }
 
+        // 如果有定时任务，在这里执行
+        // 1.怎么判断一个定时任务需要执行？ now() > TimerEvent.arrive_time
+        // 2.arrive_time如何让eventloop监听？
+
         int timeout = g_epoll_max_timeout;
         epoll_event result_events[g_epoll_max_events];
 

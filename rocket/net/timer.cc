@@ -28,7 +28,7 @@ void Timer::onTimer() {
     }
 
     //执行定时任务
-    ino64_t now = getNowMs();
+    int64_t now = getNowMs();
 
     std::vector<TimerEvent::s_ptr> tmps;
     std::vector<std::pair<int64_t, std::function<void()>>> tasks;
