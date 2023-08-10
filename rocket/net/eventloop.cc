@@ -32,6 +32,7 @@
     if (rt == -1) { \
         ERRORLOG("failed epoll_ctl when delete fd, errno=%d, error=%s", errno, strerror(errno)); \
     } \
+    m_listen_fds.erase(event->getFd()); \
     DEBUGLOG("delete event success, fd[%d]", event->getFd()); \
 
 
@@ -208,6 +209,15 @@ void EventLoop::addTask(std::function<void()> cb, bool is_wake_up /* = false */)
     if (is_wake_up) {
         wakeup();
     }
+}
+
+EventLoop* EventLoop::GetCurrentEventLoop() {
+    if (t_current_eventloop) {
+        return t_current_eventloop;
+    }
+
+    t_current_eventloop = new EventLoop();
+    return t_current_eventloop;
 }
 
 } // namespace rocket
