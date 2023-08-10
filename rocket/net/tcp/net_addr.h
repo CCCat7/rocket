@@ -4,11 +4,14 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string>
+#include <memory>
 
 namespace rocket {
 
 class NetAddr {
 public:
+    typedef std::shared_ptr<NetAddr> s_ptr;
+
     virtual sockaddr* getSockAddr() = 0;
 
     virtual socklen_t getSockLen() = 0;
@@ -17,6 +20,7 @@ public:
 
     virtual std::string toString() = 0;
 
+    virtual bool checkValid() = 0;
 };
 
 class IPNetAddr : public NetAddr {
@@ -33,6 +37,8 @@ public:
     int getFamily();
 
     std::string toString();
+
+    bool checkValid();
 
 private:
     std::string m_ip;

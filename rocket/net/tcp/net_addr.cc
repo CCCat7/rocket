@@ -53,5 +53,20 @@ std::string IPNetAddr::toString() {
     return re;
 }
 
+bool IPNetAddr::checkValid() {
+    if(m_ip.empty()) {
+        return false;
+    }
+
+    if (m_port < 0 || m_port > 65536) {
+        return;
+    }
+
+    if (inet_addr(m_ip.c_str()) == INADDR_NONE) {
+        return false;
+    }
+
+    return true;
+}
 
 } // namespace rocket
