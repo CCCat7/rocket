@@ -4,8 +4,7 @@
 #include <functional>
 #include <sys/epoll.h>
 
-namespace rocket
-{
+namespace rocket {
 class FdEvent {
 public:
     enum TriggerEvent {

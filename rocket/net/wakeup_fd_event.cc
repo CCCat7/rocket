@@ -4,16 +4,16 @@
 
 namespace rocket {
 
-WakeupFdEvent::WakeupFdEvent(int fd) : FdEvent(fd) {
-}
-
-WakeupFdEvent::~WakeupFdEvent() {
+WakeUpFdEvent::WakeUpFdEvent(int fd) : FdEvent(fd) {
 
 }
 
-void WakeupFdEvent::wakeup() {
+WakeUpFdEvent::~WakeUpFdEvent() {
+
+}
+
+void WakeUpFdEvent::wakeup() {
     char buf[8] = {'a'};
-
     int rt = write(m_fd, buf, 8);
     if (rt != 8) {
         ERRORLOG("write to wakeup fd less than 8 bytes, fd[%d]", m_fd);
@@ -21,5 +21,4 @@ void WakeupFdEvent::wakeup() {
     DEBUGLOG("success read 8 bytes");
 }
 
-
-} // namespace rocket   
+}

@@ -32,10 +32,10 @@ IPNetAddr::IPNetAddr(const std::string &addr) {
 
 IPNetAddr::IPNetAddr(sockaddr_in addr) : m_addr(addr) {
     m_ip = std::string(inet_ntoa(m_addr.sin_addr));
-    m_port = ntohs(m_addr.sin_port); 
+    m_port = ntohs(m_addr.sin_port);
 }
 
-sockaddr* IPNetAddr::getSockAddr() {
+sockaddr *IPNetAddr::getSockAddr() {
     return reinterpret_cast<sockaddr*>(&m_addr);
 }
 
@@ -54,7 +54,7 @@ std::string IPNetAddr::toString() {
 }
 
 bool IPNetAddr::checkValid() {
-    if(m_ip.empty()) {
+    if (m_ip.empty()) {
         return false;
     }
 
