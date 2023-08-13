@@ -6,16 +6,16 @@
 
 namespace rocket {
 class RpcClosure : public google::protobuf::Closure {
- public:
+public:
+    RpcClosure(std::function<void()> cb) : m_cb(cb) {}
 
-  void Run() override {
-    if (m_cb != nullptr) {
-      m_cb();
+    void Run() override {
+        if (m_cb != nullptr) {
+            m_cb();
+        }
     }
 
-  }
-
- private:
+private:
   std::function<void()> m_cb {nullptr};
 
 };
