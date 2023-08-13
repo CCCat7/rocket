@@ -22,7 +22,6 @@ RpcDispatcher* RpcDispatcher::GetRpcDispatcher() {
     return g_rpc_dispatcher;
 }
 
-
 void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::s_ptr response, TcpConnection* connection) {
   
     std::shared_ptr<TinyPBProtocol> req_protocol = std::dynamic_pointer_cast<TinyPBProtocol>(request);
@@ -103,7 +102,6 @@ void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::
     req_msg = NULL;
     rsp_msg = NULL;
 }
-
 
 bool RpcDispatcher::parseServiceFullName(const std::string& full_name, std::string& service_name, std::string& method_name) {
     if (full_name.empty()) {
