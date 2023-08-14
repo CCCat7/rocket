@@ -16,7 +16,7 @@ public:
         return m_arrive_time;
     } 
 
-    void setCanceler(bool value) {
+    void setCanceled(bool value) {
         m_is_canceled = value;
     }
 
