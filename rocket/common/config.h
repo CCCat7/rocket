@@ -2,7 +2,7 @@
 #define ROCKET_COMMON_CONFIG_H
 
 #include <map>
-
+#include <string>
 
 namespace rocket {
 

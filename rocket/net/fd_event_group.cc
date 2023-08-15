@@ -40,7 +40,8 @@ FdEvent* FdEventGroup::getFdEvent(int fd) {
     for (int i = m_fd_group.size(); i < new_size; ++i) {
         m_fd_group.push_back(new FdEvent(i));
     }
-
+    
+    lock.unlock();
     return m_fd_group[fd];
 }
 

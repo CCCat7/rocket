@@ -8,7 +8,7 @@ void RpcController::Reset() {
     m_error_info = "";
     m_msg_id = "";
     m_is_failed = false;
-    m_is_cancled = false;
+    m_is_cancelled = false;
     m_local_addr = nullptr;
     m_peer_addr = nullptr;
     m_timeout = 1000;   // ms
@@ -23,7 +23,7 @@ std::string RpcController::ErrorText() const {
 }
 
 void RpcController::StartCancel() {
-    m_is_cancled = true;
+    m_is_cancelled = true;
 }
 
 void RpcController::SetFailed(const std::string& reason) {
@@ -31,7 +31,7 @@ void RpcController::SetFailed(const std::string& reason) {
 }
 
 bool RpcController::IsCanceled() const {
-    return m_is_cancled;
+    return m_is_cancelled;
 }
 
 void RpcController::NotifyOnCancel(google::protobuf::Closure* callback) {

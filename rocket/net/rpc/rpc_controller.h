@@ -45,7 +45,7 @@ private:
     std::string m_msg_id;
 
     bool m_is_failed {false};
-    bool m_is_cancled {false};
+    bool m_is_cancelled {false};
 
     NetAddr::s_ptr m_local_addr;
     NetAddr::s_ptr m_peer_addr;

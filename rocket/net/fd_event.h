@@ -23,7 +23,7 @@ public:
 
     void listen(TriggerEvent event_type, std::function<void()> callback, std::function<void()> error_callback = nullptr);
 
-    void cancle(TriggerEvent event_type);
+    void cancel(TriggerEvent event_type);
 
     int getFd() const {
         return m_fd;

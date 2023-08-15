@@ -165,7 +165,7 @@ void TcpConnection::onWrite() {
     }
     
     if (is_write_all) {
-        m_fd_event->cancle(FdEvent::OUT_EVENT);
+        m_fd_event->cancel(FdEvent::OUT_EVENT);
         m_event_loop->addEpollEvent(m_fd_event);
     }
 
@@ -191,8 +191,8 @@ void TcpConnection::clear() {
     {
         return;
     }
-    m_fd_event->cancle(FdEvent::IN_EVENT);
-    m_fd_event->cancle(FdEvent::OUT_EVENT);
+    m_fd_event->cancel(FdEvent::IN_EVENT);
+    m_fd_event->cancel(FdEvent::OUT_EVENT);
 
     m_event_loop->deleteEpollEvent(m_fd_event);
 

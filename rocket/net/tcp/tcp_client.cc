@@ -43,7 +43,7 @@ void TcpClient::connect(std::function<void()> done) {
         initLocalAddr();
         if (done) {
             done();
-            }
+        }
     } 
     else if (rt == -1) {
         if (errno == EINPROGRESS) {
