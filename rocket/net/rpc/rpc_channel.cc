@@ -66,7 +66,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
         my_controller->SetError(ERROR_RPC_CALL_TIMEOUT, "rpc call timeout " + std::to_string(my_controller->GetTimeout()));
 
         if (channel->getClosure()) {
-        channel->getClosure()->Run();
+            channel->getClosure()->Run();
         }
         channel.reset();
     });
@@ -76,18 +76,18 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     m_client->connect([req_protocol, channel]() mutable {
         RpcController* my_controller = dynamic_cast<RpcController*>(channel->getController());
 
-    if (channel->getTcpClient()->getConnectErrorCode() != 0) {
-        my_controller->SetError(channel->getTcpClient()->getConnectErrorCode(), channel->getTcpClient()->getConnectErrorInfo());
-        ERRORLOG("%s | connect error, error coode[%d], error info[%s], peer addr[%s]", 
-        req_protocol->m_msg_id.c_str(), my_controller->GetErrorCode(), 
-        my_controller->GetErrorInfo().c_str(), channel->getTcpClient()->getPeerAddr()->toString().c_str());
-        return;
-    }
+        if (channel->getTcpClient()->getConnectErrorCode() != 0) {
+            my_controller->SetError(channel->getTcpClient()->getConnectErrorCode(), channel->getTcpClient()->getConnectErrorInfo());
+            ERRORLOG("%s | connect error, error coode[%d], error info[%s], peer addr[%s]", 
+            req_protocol->m_msg_id.c_str(), my_controller->GetErrorCode(), 
+            my_controller->GetErrorInfo().c_str(), channel->getTcpClient()->getPeerAddr()->toString().c_str());
+            return;
+        }
 
-    INFOLOG("%s | connect success, peer addr[%s], local addr[%s]",
-        req_protocol->m_msg_id.c_str(), 
-        channel->getTcpClient()->getPeerAddr()->toString().c_str(), 
-        channel->getTcpClient()->getLocalAddr()->toString().c_str()); 
+        INFOLOG("%s | connect success, peer addr[%s], local addr[%s]",
+            req_protocol->m_msg_id.c_str(), 
+            channel->getTcpClient()->getPeerAddr()->toString().c_str(), 
+            channel->getTcpClient()->getLocalAddr()->toString().c_str()); 
 
         channel->getTcpClient()->writeMessage(req_protocol, [req_protocol, channel, my_controller](AbstractProtocol::s_ptr) mutable {
             INFOLOG("%s | send rpc request success. call method name[%s], peer addr[%s], local addr[%s]", 
@@ -102,7 +102,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                 // 当成功读取到回包后， 取消定时任务
                 channel->getTimerEvent()->setCanceled(true);
                 
-                if (!(channel->getResponse()->ParseFromString(rsp_protocol->m_pb_data))){
+                if (!(channel->getResponse()->ParseFromString(rsp_protocol->m_pb_data))) {
                     ERRORLOG("%s | serialize error", rsp_protocol->m_msg_id.c_str());
                     my_controller->SetError(ERROR_FAILED_SERIALIZE, "serialize error");
                     return;
@@ -116,6 +116,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                     my_controller->SetError(rsp_protocol->m_err_code, rsp_protocol->m_err_info);
                     return;
                 }
+                
                 INFOLOG("%s | call rpc success, call method name[%s], peer addr[%s], local addr[%s]",
                 rsp_protocol->m_msg_id.c_str(), rsp_protocol->m_method_name.c_str(),
                 channel->getTcpClient()->getPeerAddr()->toString().c_str(), channel->getTcpClient()->getLocalAddr()->toString().c_str())

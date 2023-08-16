@@ -43,27 +43,29 @@ public:
 
 void test_tcp_server() {
 
-  rocket::IPNetAddr::s_ptr addr = std::make_shared<rocket::IPNetAddr>("127.0.0.1", 12346);
+    rocket::IPNetAddr::s_ptr addr = std::make_shared<rocket::IPNetAddr>("127.0.0.1", 12346);
 
-  DEBUGLOG("create addr %s", addr->toString().c_str());
+    DEBUGLOG("create addr %s", addr->toString().c_str());
 
-  rocket::TcpServer tcp_server(addr);
+    rocket::TcpServer tcp_server(addr);
 
-  tcp_server.start();
+    tcp_server.start();
 
 }
 
 
 int main() {
 
-  rocket::Config::SetGlobalConfig("../conf/rocket.xml");
+    rocket::Config::SetGlobalConfig("../conf/rocket.xml");
 
-  rocket::Logger::InitGlobalLogger();
+    rocket::Logger::InitGlobalLogger();
 
-  std::shared_ptr<OrderImpl> service = std::make_shared<OrderImpl>();
-  rocket::RpcDispatcher::GetRpcDispatcher()->registerService(service);
+    std::shared_ptr<OrderImpl> service = std::make_shared<OrderImpl>();
 
-  test_tcp_server();
+    // 注册服务 客户端调用在tcp_connection的onRead后excute中执行
+    rocket::RpcDispatcher::GetRpcDispatcher()->registerService(service);
 
-  return 0;
+    test_tcp_server();
+
+    return 0;
 }

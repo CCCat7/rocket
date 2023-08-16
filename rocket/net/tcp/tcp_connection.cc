@@ -86,7 +86,7 @@ void TcpConnection::onRead() {
 
 void TcpConnection::excute() {
     if (m_connection_type == TcpConnectionByServer) {
-        // 将 RPC 请求执行业务逻辑，获取 RPC 响应, 再把 RPC 响应发送回去
+        // 将RPC请求执行业务逻辑，获取 RPC响应，再把RPC响应发送回去
         std::vector<AbstractProtocol::s_ptr> result;
         std::vector<AbstractProtocol::s_ptr> replay_messages;
         m_coder->decode(result, m_in_buffer);
@@ -97,6 +97,7 @@ void TcpConnection::excute() {
 
             std::shared_ptr<TinyPBProtocol> message = std::make_shared<TinyPBProtocol>();
             
+            //服务端通过dispatch来调用服务
             RpcDispatcher::GetRpcDispatcher()->dispatch(result[i], message, this);
             replay_messages.emplace_back(message);
         }

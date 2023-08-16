@@ -23,6 +23,7 @@ RpcDispatcher* RpcDispatcher::GetRpcDispatcher() {
     return g_rpc_dispatcher;
 }
 
+// 根据请求，解析出服务名与方法名，在注册的服务中找到google::protobuf::Service类型的service
 void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::s_ptr response, TcpConnection* connection) {
   
     std::shared_ptr<TinyPBProtocol> req_protocol = std::dynamic_pointer_cast<TinyPBProtocol>(request);
@@ -80,6 +81,12 @@ void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::
 
     RunTime::GetRunTime()->m_msgid = req_protocol->m_msg_id;
     RunTime::GetRunTime()->m_method_name = method_name;
+    
+    // 服务端进行调用
+    // class Order : public ::PROTOBUF_NAMESPACE_ID::Service 这里CallMethod是自动实现的 service为Service基类指针
+    // 会调用到Order::CallMethod，protobuf会根据method->index()找到对应的执行函数，
+    // Order实现了makeorder函数，所以上面的service->CallMethod(m_descriptor, &controller, recv_msg, resp_msg, done); 
+    // 会执行到OrderImpl::makeorder
     service->CallMethod(method, &rpcController, req_msg, rsp_msg, NULL);
 
     if (!rsp_msg->SerializeToString(&(rsp_protocol->m_pb_data))) {

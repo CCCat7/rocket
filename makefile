@@ -1,9 +1,3 @@
-##################################
-# makefile
-# ikerli
-# 2022-05-23
-##################################
-
 PATH_BIN = bin
 PATH_LIB = lib
 PATH_OBJ = obj
@@ -35,7 +29,7 @@ PATH_INSTALL_INC_RPC = $(PATH_INSTALL_INC_ROOT)/$(PATH_RPC)
 
 CXX := g++
 
-CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable
+CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable -Wno-format-security
 
 CXXFLAGS += -I./ -I$(PATH_ROCKET)	-I$(PATH_COMM) -I$(PATH_NET) -I$(PATH_TCP) -I$(PATH_CODER) -I$(PATH_RPC)
 

@@ -103,4 +103,34 @@ void TcpBuffer::moveWriteIndex(int size) {
     adjustBuffer();
 }
 
+void TcpBuffer::recycleRead(int index) {
+  int j = m_read_index + index;
+  if (j > (int)m_buffer.size()) {
+    return;
+  }
+  m_read_index = j;
+  adjustBuffer();
+}
+
+void TcpBuffer::recycleWrite(int index) {
+  int j = m_write_index + index;
+  if (j > (int)m_buffer.size()) {
+    return;
+  }
+  m_write_index = j;
+  adjustBuffer();
+}
+
+// const char* TcpBuffer::getBuffer() {
+//   char* tmp;
+//   memcpy(&tmp, &m_buffer[m_read_index], readAble());
+//   return tmp;
+// }
+
+std::string TcpBuffer::getBufferString() {
+  std::string re(readAble(), '0');
+  memcpy(&re[0],  &m_buffer[m_read_index], readAble());
+  return re;
+}
+
 }

@@ -8,21 +8,21 @@
 
 namespace rocket {
 
-#define NEWMESSAGE(type, var_name) \
-    std::shared_ptr<type> var_name = std::make_shared<type>(); \
+#define NEWMESSAGE(type, var_name)                                                                                                  \
+    std::shared_ptr<type> var_name = std::make_shared<type>();                                                                      \
 
-#define NEWRPCCONTROLLER(var_name) \
-    std::shared_ptr<rocket::RpcController> var_name = std::make_shared<rocket::RpcController>(); \
+#define NEWRPCCONTROLLER(var_name)                                                                                                  \
+    std::shared_ptr<rocket::RpcController> var_name = std::make_shared<rocket::RpcController>();                                    \
 
-#define NEWRPCCHANNEL(addr, var_name) \
+#define NEWRPCCHANNEL(addr, var_name)                                                                                               \
     std::shared_ptr<rocket::RpcChannel> var_name = std::make_shared<rocket::RpcChannel>(std::make_shared<rocket::IPNetAddr>(addr)); \
 
-#define CALLRPRC(addr, method_name, controller, request, response, closure) \
-{ \
-    NEWRPCCHANNEL(addr, channel); \
-    channel->Init(controller, request, response, closure); \
-    Order_Stub(channel.get()).method_name(controller.get(), request.get(), response.get(), closure.get()); \
-} \
+#define CALLRPRC(addr, method_name, controller, request, response, closure)                                                         \
+{                                                                                                                                   \
+    NEWRPCCHANNEL(addr, channel);                                                                                                   \
+    channel->Init(controller, request, response, closure);                                                                          \
+    Order_Stub(channel.get()).method_name(controller.get(), request.get(), response.get(), closure.get());                          \
+}                                                                                                                                   \
 
 class RpcChannel : public google::protobuf::RpcChannel, public std::enable_shared_from_this<RpcChannel> {
 public:
@@ -30,6 +30,7 @@ public:
     typedef std::shared_ptr<google::protobuf::RpcController> controller_s_ptr;
     typedef std::shared_ptr<google::protobuf::Message> message_s_ptr;
     typedef std::shared_ptr<google::protobuf::Closure> closure_s_ptr;
+
 public:
     RpcChannel(NetAddr::s_ptr peer_addr);
 
@@ -50,8 +51,9 @@ public:
     google::protobuf::Closure* getClosure();
 
     TcpClient* getTcpClient();
-TimerEvent::s_ptr getTimerEvent();
- private:
+    TimerEvent::s_ptr getTimerEvent();
+
+private:
     NetAddr::s_ptr m_peer_addr {nullptr};
     NetAddr::s_ptr m_local_addr {nullptr};
 

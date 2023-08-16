@@ -32,6 +32,10 @@ public:
     void moveReadIndex(int size);
     void moveWriteIndex(int size);
 
+    std::string getBufferString();
+    void recycleRead(int index);
+    void recycleWrite(int index);
+
 private:
     int m_read_index{0};
     int m_write_index{0};
