@@ -20,6 +20,10 @@ TcpServer::~TcpServer() {
 void TcpServer::init() {
     m_acceptor = std::make_shared<TcpAcceptor>(m_local_addr);
 
+
+    //for qps
+    m_http_dispatcher = std::make_shared<HttpDispacther>();
+    
     m_main_event_loop = EventLoop::GetCurrentEventLoop();
     m_io_thread_group = new IOThreadGroup(2);
 

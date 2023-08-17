@@ -10,6 +10,9 @@
 #include "rocket/net/coder/abstract_coder.h"
 #include "rocket/net/rpc/rpc_dispatcher.h"
 
+//for qps
+#include "rocket/net/http/abstract_codec.h"
+
 namespace rocket {
 
 enum TcpState {
@@ -57,6 +60,16 @@ public:
     NetAddr::s_ptr getLocalAddr();
     NetAddr::s_ptr getPeerAddr();
 
+    // for qps: return http coder
+    AbstractCodeC *getCodec() {
+        return m_http_coder;
+    }  
+
+    // for qps: return http coder
+    TcpBuffer::s_ptr getOutBuffer() {
+        return m_out_buffer;
+    }
+
 private:
     EventLoop *m_event_loop{NULL}; // 代表持有该连接的 IO 线程
 
@@ -69,6 +82,9 @@ private:
     FdEvent *m_fd_event{NULL};
 
     AbstractCoder *m_coder{NULL};
+
+    //for qps: http coder
+    AbstractCodeC *m_http_coder{NULL}; 
 
     TcpState m_state;
 

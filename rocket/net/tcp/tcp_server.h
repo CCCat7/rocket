@@ -8,6 +8,11 @@
 #include "rocket/net/eventloop.h"
 #include "rocket/net/io_thread_group.h"
 
+//for qps
+#include <map>
+#include "rocket/net/http/http_servlet.h"
+#include "rocket/net/http/http_dispatcher.h"
+
 namespace rocket {
 
 class TcpServer {
@@ -17,6 +22,10 @@ public:
     ~TcpServer();
 
     void start();
+
+    //for qps
+    //std::map<std::string, HttpServlet::ptr> m_servlets;
+    AbstractDispatcher::ptr m_http_dispatcher;
 
 private:
     void init();

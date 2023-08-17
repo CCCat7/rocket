@@ -5,6 +5,13 @@
 #include "rocket/net/coder/string_coder.h"
 #include "rocket/net/coder/tinypb_coder.h"
 
+//for qps
+#include "rocket/net/http/http_codec.h"
+#include "rocket/net/http/abstract_data.h"
+#include "rocket/net/http/http_request.h"
+#include "rocket/net/http/http_response.h"
+#include "rocket/net/http/http_dispatcher.h"
+
 namespace rocket {
 
 TcpConnection::TcpConnection(EventLoop *event_loop, int fd, int buffer_size, NetAddr::s_ptr peer_addr, NetAddr::s_ptr local_addr, TcpConnectionType type /*= TcpConnectionByServer*/)
@@ -17,6 +24,9 @@ TcpConnection::TcpConnection(EventLoop *event_loop, int fd, int buffer_size, Net
     m_fd_event->setNonBlock();
 
     m_coder = new TinyPBCoder();
+
+    //for qps
+    m_http_coder = new HttpCodeC();
 
     if (m_connection_type == TcpConnectionByServer) {
         listenRead();
@@ -86,24 +96,36 @@ void TcpConnection::onRead() {
 
 void TcpConnection::excute() {
     if (m_connection_type == TcpConnectionByServer) {
-        // 将RPC请求执行业务逻辑，获取 RPC响应，再把RPC响应发送回去
-        std::vector<AbstractProtocol::s_ptr> result;
-        std::vector<AbstractProtocol::s_ptr> replay_messages;
-        m_coder->decode(result, m_in_buffer);
-        for (size_t i = 0; i < result.size(); ++i) {
-            // 1. 针对每一个请求，调用 rpc 方法，获取响应 message
-            // 2. 将响应 message 放入到发送缓冲区，监听可写事件回包
-            INFOLOG("success get request[%s] from client[%s]", result[i]->m_msg_id.c_str(), m_peer_addr->toString().c_str());
+        // // 将RPC请求执行业务逻辑，获取 RPC响应，再把RPC响应发送回去
+        // std::vector<AbstractProtocol::s_ptr> result;
+        // std::vector<AbstractProtocol::s_ptr> replay_messages;
+        // m_coder->decode(result, m_in_buffer);
+        // for (size_t i = 0; i < result.size(); ++i) {
+        //     // 1. 针对每一个请求，调用 rpc 方法，获取响应 message
+        //     // 2. 将响应 message 放入到发送缓冲区，监听可写事件回包
+        //     INFOLOG("success get request[%s] from client[%s]", result[i]->m_msg_id.c_str(), m_peer_addr->toString().c_str());
 
-            std::shared_ptr<TinyPBProtocol> message = std::make_shared<TinyPBProtocol>();
+        //     std::shared_ptr<TinyPBProtocol> message = std::make_shared<TinyPBProtocol>();
             
-            //服务端通过dispatch来调用服务
-            RpcDispatcher::GetRpcDispatcher()->dispatch(result[i], message, this);
-            replay_messages.emplace_back(message);
-        }
+        //     //服务端通过dispatch来调用服务
+        //     RpcDispatcher::GetRpcDispatcher()->dispatch(result[i], message, this);
+        //     replay_messages.emplace_back(message);
+        // }
 
-        m_coder->encode(replay_messages, m_out_buffer);
+        // m_coder->encode(replay_messages, m_out_buffer);
+        // listenWrite();
+
+        //for qps
+        rocket::HttpRequest http_req;
+        //rocket::HttpResponse http_req;
+        m_http_coder->decode(m_in_buffer.get(), &http_req);
+        
+        HttpDispacther::GetHttpDispatcher()->dispatch(&http_req, this);
+        //RpcDispatcher::GetRpcDispatcher()->dispatch(result[i], message, this);
+        //m_coder->encode(replay_messages, m_out_buffer);
         listenWrite();
+
+
     }
     else {
         // 从 buffer 里 decode 得到 message 对象, 执行其回调

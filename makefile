@@ -8,6 +8,7 @@ PATH_NET = $(PATH_ROCKET)/net
 PATH_TCP = $(PATH_ROCKET)/net/tcp
 PATH_CODER = $(PATH_ROCKET)/net/coder
 PATH_RPC = $(PATH_ROCKET)/net/rpc
+PATH_HTTP = $(PATH_ROCKET)/net/http
 
 PATH_TESTCASES = testcases
 
@@ -22,7 +23,7 @@ PATH_INSTALL_INC_NET = $(PATH_INSTALL_INC_ROOT)/$(PATH_NET)
 PATH_INSTALL_INC_TCP = $(PATH_INSTALL_INC_ROOT)/$(PATH_TCP)
 PATH_INSTALL_INC_CODER = $(PATH_INSTALL_INC_ROOT)/$(PATH_CODER)
 PATH_INSTALL_INC_RPC = $(PATH_INSTALL_INC_ROOT)/$(PATH_RPC)
-
+PATH_INSTALL_INC_HTTP = $(PATH_INSTALL_INC_ROOT)/$(PATH_HTTP)
 
 # PATH_PROTOBUF = /usr/include/google
 # PATH_TINYXML = /usr/include/tinyxml
@@ -31,7 +32,7 @@ CXX := g++
 
 CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable -Wno-format-security
 
-CXXFLAGS += -I./ -I$(PATH_ROCKET)	-I$(PATH_COMM) -I$(PATH_NET) -I$(PATH_TCP) -I$(PATH_CODER) -I$(PATH_RPC)
+CXXFLAGS += -I./ -I$(PATH_ROCKET)	-I$(PATH_COMM) -I$(PATH_NET) -I$(PATH_TCP) -I$(PATH_CODER) -I$(PATH_RPC) -I$(PATH_HTTP)
 
 LIBS += /usr/lib/libprotobuf.a	/usr/lib/libtinyxml.a
 
@@ -41,10 +42,11 @@ NET_OBJ := $(patsubst $(PATH_NET)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_NET)/
 TCP_OBJ := $(patsubst $(PATH_TCP)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_TCP)/*.cc))
 CODER_OBJ := $(patsubst $(PATH_CODER)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_CODER)/*.cc))
 RPC_OBJ := $(patsubst $(PATH_RPC)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_RPC)/*.cc))
+HTTP_OBJ := $(patsubst $(PATH_HTTP)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_HTTP)/*.cc))
 
-ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server
+ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server $(PATH_BIN)/test_http_server
 
-TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client  $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server
+TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client  $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server $(PATH_BIN)/test_http_server
 
 LIB_OUT := $(PATH_LIB)/librocket.a
 
@@ -66,8 +68,11 @@ $(PATH_BIN)/test_rpc_client: $(LIB_OUT)
 $(PATH_BIN)/test_rpc_server: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_rpc_server.cc $(PATH_TESTCASES)/order.pb.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
+$(PATH_BIN)/test_http_server: $(LIB_OUT)
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_http_server.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
-$(LIB_OUT): $(COMM_OBJ) $(NET_OBJ) $(TCP_OBJ) $(CODER_OBJ) $(RPC_OBJ)
+
+$(LIB_OUT): $(COMM_OBJ) $(NET_OBJ) $(TCP_OBJ) $(CODER_OBJ) $(RPC_OBJ) $(HTTP_OBJ)
 	cd $(PATH_OBJ) && ar rcv librocket.a *.o && cp librocket.a ../lib/
 
 $(PATH_OBJ)/%.o : $(PATH_COMM)/%.cc
@@ -84,6 +89,9 @@ $(PATH_OBJ)/%.o : $(PATH_CODER)/%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(PATH_OBJ)/%.o : $(PATH_RPC)/%.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(PATH_OBJ)/%.o : $(PATH_HTTP)/%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # print something test
@@ -103,6 +111,7 @@ install:
 		&& cp $(PATH_TCP)/*.h $(PATH_INSTALL_INC_TCP) \
 		&& cp $(PATH_CODER)/*.h $(PATH_INSTALL_INC_CODER) \
 		&& cp $(PATH_RPC)/*.h $(PATH_INSTALL_INC_RPC) \
+		&& cp $(PATH_HTTP)/*.h $(PATH_INSTALL_INC_HTTP) \
 		&& cp $(LIB_OUT) $(PATH_INSTALL_LIB_ROOT)/
 
 
