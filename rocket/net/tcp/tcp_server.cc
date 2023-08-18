@@ -7,7 +7,7 @@ namespace rocket {
 
 TcpServer::TcpServer(NetAddr::s_ptr local_addr) : m_local_addr(local_addr) {
     init();
-    INFOLOG("rocket TcpServer listen sucess on [%s]", m_local_addr->toString().c_str());
+    //INFOLOG("rocket TcpServer listen sucess on [%s]", m_local_addr->toString().c_str());
 }
 
 TcpServer::~TcpServer() {
@@ -17,15 +17,19 @@ TcpServer::~TcpServer() {
     }
 }
 
+void TcpServer::registerHttpServlet(const std::string& url_path, HttpServlet::ptr servlet) {
+    m_http_dispatcher->registerServlet(url_path, servlet);
+}
+
 void TcpServer::init() {
     m_acceptor = std::make_shared<TcpAcceptor>(m_local_addr);
 
 
     //for qps
-    m_http_dispatcher = std::make_shared<HttpDispacther>();
+    m_http_dispatcher =  HttpDispacther::GetHttpDispatcher();
     
     m_main_event_loop = EventLoop::GetCurrentEventLoop();
-    m_io_thread_group = new IOThreadGroup(2);
+    m_io_thread_group = new IOThreadGroup(4);
 
     m_listen_fd_event = new FdEvent(m_acceptor->getListenFd());
     m_listen_fd_event->listen(FdEvent::IN_EVENT, std::bind(&TcpServer::onAccept, this));

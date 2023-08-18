@@ -11,7 +11,8 @@ namespace rocket {
 
 class HttpDispacther : public AbstractDispatcher {
  public:
-  static HttpDispacther* GetHttpDispatcher();
+ typedef std::shared_ptr<HttpDispacther> ptr;
+  static HttpDispacther::ptr GetHttpDispatcher();
 
   HttpDispacther() = default;
 

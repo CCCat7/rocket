@@ -24,8 +24,7 @@ public:
     void start();
 
     //for qps
-    //std::map<std::string, HttpServlet::ptr> m_servlets;
-    AbstractDispatcher::ptr m_http_dispatcher;
+    void registerHttpServlet(const std::string& url_path, HttpServlet::ptr servlet);
 
 private:
     void init();
@@ -47,6 +46,11 @@ private:
     int m_client_counts{0};
 
     std::set<TcpConnection::s_ptr> m_client;
+
+    //for qps
+    //std::map<std::string, HttpServlet::ptr> m_servlets;
+    HttpDispacther::ptr m_http_dispatcher;
+
 };
 
 }

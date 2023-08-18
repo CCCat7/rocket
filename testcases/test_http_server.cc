@@ -80,13 +80,16 @@ int main() {
 
     rocket::Config::SetGlobalConfig("../conf/rocket.xml");
     rocket::IPNetAddr::s_ptr addr = std::make_shared<rocket::IPNetAddr>("127.0.0.1", 20000);
-    rocket::TcpServer tcp_server(addr);
+
     rocket::Logger::InitGlobalLogger();
+    //rocket::TcpServer tcp_server(addr);
+    auto server = std::make_shared<rocket::TcpServer>(addr);
+    server->registerHttpServlet("/qps", std::make_shared<QPSHttpServlet>());
 
     //REGISTER_HTTP_SERVLET("/qps", QPSHttpServlet);
-    dynamic_cast<rocket::HttpDispacther*>(tcp_server.m_http_dispatcher.get())->m_servlets["qps"] = std::make_shared<QPSHttpServlet>();
+    //dynamic_cast<rocket::HttpDispacther*>(tcp_server.m_http_dispatcher.get())->m_servlets["qps"] = std::make_shared<QPSHttpServlet>();
     
-    tcp_server.start();
+    server->start();
 
     return 0;
 }

@@ -8,13 +8,14 @@
 namespace rocket {
 
 //for rpc
-static HttpDispacther* g_http_dispatcher = NULL;
+static HttpDispacther::ptr g_http_dispatcher = NULL;
 
-HttpDispacther* HttpDispacther::GetHttpDispatcher() {
+HttpDispacther::ptr HttpDispacther::GetHttpDispatcher() {
     if (g_http_dispatcher != NULL) {
         return g_http_dispatcher;
     }
-    g_http_dispatcher = new HttpDispacther;
+    std::unique_ptr<HttpDispacther> up (new HttpDispacther());
+    g_http_dispatcher = std::move(up);
     return g_http_dispatcher;
 }
 
